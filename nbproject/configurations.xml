@@ -6,7 +6,6 @@
                    projectFiles="true">
       <itemPath>lsm9ds0.h</itemPath>
       <itemPath>uart.h</itemPath>
-      <itemPath>pic_config.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
