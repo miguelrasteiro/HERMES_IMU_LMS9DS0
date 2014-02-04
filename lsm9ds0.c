@@ -17,161 +17,9 @@
 | 1.0		| 29/1/2014	| MR              | First Release
 |               |               |                 |
 *******************************************************************************/
-
 #include "lsm9ds0.h"
 #include <plib.h>
 
-/* LSM9DS0 Registers */
-/*#define OUT_TEMP_L_XM	(0x05)    /* TEMPERATURE OUT LSB REG   *
-#define OUT_TEMP_H_XM	(0x06)    /* TEMPERATURE OUT MSB REG   *
-#define STATUS_REG_M	(0x07)    /* STATUS MAGNETOMETER       *
-#define OUT_X_L_M	(0x08)    /* X AXIS OUT LSB REG MAG    *
-#define OUT_X_H_M	(0x09)    /* X AXIS OUT MSB REG MAG    *
-#define OUT_Y_L_M	(0x0A)    /* Y AXIS OUT LSB REG MAG    *
-#define OUT_Y_H_M	(0x0B)    /* Y AXIS OUT MSB REG MAG    *
-#define OUT_Z_L_M	(0x0C)    /* Z AXIS OUT LSB REG MAG    *
-#define OUT_Z_H_M	(0x0D)    /* Z AXIS OUT MSB REG MAG    *
-#define WHO_AM_I_G	(0x0F)    /* WHO AM I GYRO             *
-#define WHO_AM_I_XM	(0x0F)    /* WHO AM I MAG AND ACC      *
-#define INT_CTRL_REG_M  (0x12)    /* INTERRUPT CTRL REG MAG    *
-#define INT_SRC_REG_M   (0x13)    /* INTERRUPT SOURCE REG MAG  *
-#define INT_THS_L_M     (0x14)    /* INTERRUPT TSH REG MAG     *
-#define INT_THS_H_M     (0x15)    /* INTERRUPT TSH REG MAG     *
-#define OFFSET_X_L_M    (0x16)    /* X AXIS OFFSET LSB REG MAG *
-#define OFFSET_X_H_M    (0x17)    /* X AXIS OFFSET MSB REG MAG /
-#define OFFSET_Y_L_M    (0x18)    /* Y AXIS OFFSET LSB REG MAG *
-#define OFFSET_Y_H_M    (0x19)    /* Y AXIS OFFSET MSB REG MAG /
-#define OFFSET_Z_L_M    (0x1A)    /* Z AXIS OFFSET LSB REG MAG /
-#define OFFSET_Z_H_M    (0x1B)    /* Z AXIS OFFSET MSB REG MAG /
-#define REFERENCE_X     (0x1C)    /* REF X AXIS                *
-#define REFERENCE_Y     (0x1D)    /* REF Y AXIS                *
-#define REFERENCE_Z     (0x1E)    /* REF Z AXIS                /
-#define CTRL_REG0_XM	(0x1F)    /* CTRL REG0 MAG AND ACC     /
-#define CTRL_REG1_XM	(0x20)    /* CTRL REG1 MAG AND ACC     /
-#define CTRL_REG1_G	(0x20)    /* CTRL REG1 GYRO            
-#define CTRL_REG2_XM	(0x21)    /* CTRL REG2 MAG AND ACC     /
-#define CTRL_REG2_G	(0x21)    /* CTRL REG2 GYRO            /
-#define CTRL_REG3_XM	(0x22)    /* CTRL_REG3 MAG AND ACC    *
-#define CTRL_REG3_G	(0x22)    /* CTRL REG3 GYRO           /
-#define CTRL_REG4_XM	(0x23)    /* CTRL_REG4 MAG AND ACC    *
-#define CTRL_REG4_G	(0x23)    /* CTRL REG4 GYRO           *
-#define CTRL_REG5_XM	(0x24)    /* CTRL_REG5 MAG AND ACC    /
-#define CTRL_REG5_G	(0x24)    /* CTRL REG5 GYRO           *
-#define CTRL_REG6_XM	(0x25)    /* CTRL_REG6 MAG AND ACC     *
-#define	REFERENCE_G	(0x25)    /* REFERENCE REG GYRO        *
-#define CTRL_REG7_XM	(0x26)    /* CTRL_REG7 MAG AND ACC     *
-#define STATUS_REG_G    (0x27)    /* STATUS REG GYRO           *
-#define STATUS_REG_A    (0x27)    /* STATUS REG ACC            *
-#define	OUT_X_L_G	(0x28)    /* X AXIS OUT LSB REG GYRO   *
-#define	OUT_X_L_A	(0x28)    /* X AXIS OUT LSB REG ACC    *
-#define	OUT_X_H_G	(0x29)    /* X AXIS OUT MSB REG GYRO   *
-#define	OUT_X_H_A	(0x29)    /* X AXIS OUT MSB REG ACC    *
-#define	OUT_Y_L_G	(0x2A)    /* Y AXIS OUT LSB REG GYRO   /
-#define	OUT_Y_L_A	(0x2A)    /* Y AXIS OUT LSB REG ACC    /
-#define	OUT_Y_H_G	(0x2B)    /* Y AXIS OUT MSB REG GYRO   /
-#define	OUT_Y_H_A	(0x2B)    /* Y AXIS OUT MSB REG ACC    /
-#define	OUT_Z_L_G	(0x2C)    /* Z AXIS OUT LSB REG GYRO   /
-#define	OUT_Z_L_A	(0x2C)    /* Z AXIS OUT LSB REG ACC    /
-#define	OUT_Z_H_G	(0x2D)    /* Z AXIS OUT MSB REG GYRO   *
-#define	OUT_Z_H_A	(0x2D)    /* Z AXIS OUT MSB REG ACC    *
-#define	FIFO_CTRL_REG	(0x2E)    /* FIFO CONTROL REGISTER     /
-#define FIFO_SRC_REG	(0x2F)    /* FIFO SOURCE REGISTER      
-#define	INT1_CFG 	(0x30)    /*  *
-#define	INT_GEN_1_REG 	(0x30)    /*  *
-#define	INT1_SRC	(0x31)    /*  *
-#define	INT_GEN_1_SRC 	(0x31)    /*  *
-#define	INT1_TSH_XH	(0x32)    /*  *
-#define	INT_GEN_1_THS	(0x32)    /*  *
-#define	INT1_TSH_XL	(0x33)    /*  /
-#define	INT_GEN_1_DURATION   (0x33)   /*  *
-#define	INT1_TSH_YH	(0x34)    /*  *
-#define	INT_GEN_2_REG 	(0x34)    /*  *
-#define	INT1_TSH_YL	(0x35)    /*  *
-#define	INT_GEN_2_SRC 	(0x35)    /*  *
-#define	INT1_TSH_ZH	(0x36)    /*  *
-#define	INT_GEN_2_THS 	(0x36)    /*  *
-#define	INT1_TSH_ZL	(0x37)    /*  
-#define	INT_GEN_2_DURATION   (0x37)    /*  *
-#define	INT1_DURATION	(0x38)    /*  *
-#define	CLICK_CFG	(0x38)    /*  *
-#define	CLICK_SRC	(0x39)    /*  *
-#define	CLICK_THS	(0x3A)    /*  *
-define	TIME_LIMIT	(0x3B)    /*  *
-#define	TIME_LATENCY	(0x3C)    /*  *
-#define	TIME_WINDOW	(0x3D)    /*  *
-#define	Act_THS 	(0x3E)    /*  /
-#define	Act_DUR 	(0x3F)    /*  /
-
-#define Read            (0x01)
-#define Write           (0x00)
-#define Address_XM      (0x3A)     /* SAO_MX TO VDD  *
-#define Address_G       (0xD6)     /* SAO_G TO VDD   *
-//#define Address_XM      (0x3C)     /* SAO_MX TO GND  *
-//#define Address_G       (0xD4)     /* SAO_G TO GND   */
-
-/* CTRL_REG1 */
-/*#define ALL_ZEROES	(0x00)
-#define PM_OFF		(0x00)
-#define PM_NORMAL	(0x08)
-#define ENABLE_ALL_AXES	(0x07)
-#define ENABLE_NO_AXES	(0x00)
-#define BW00		(0x00)
-#define BW01		(0x10)
-#define BW10		(0x20)
-#define BW11		(0x30)
-#define ODR095		(0x00)  /* ODR =  95Hz *
-#define ODR190		(0x40)  /* ODR = 190Hz *
-#define ODR380		(0x80)  /* ODR = 380Hz *
-#define ODR760		(0xC0)  /* ODR = 760Hz *
-
-/* CTRL_REG2 *
-#define NORMAL_MODE_RR	(0x00)  /* Normal mode (reset reading HP_RESET_FILTER*
-#define RF_FILT		(0x10)  /* Reference signal for filtering*
-#define NORMAL_MODE	(0x20)
-#define AUTORST_INT	(0x30)  /* Autoreset on interrupt event*
-                         /* ODR |  95 Hz  |  190Hz  |  380Hz  |  720Hz  |*
-#define HPCF_00  	(0x00)/*|   7.2   |   13.5  |   27    |   51.4  |*
-#define HPCF_01		(0x01)/*|   3.5   |   7.2   |   13.5  |   27    |*
-#define HPCF_02		(0x02)/*|   1.8   |   3.5   |   7.2   |   13.5  |*
-#define HPCF_03		(0x03)/*|   0.9   |   1.8   |   3.5   |   7.2   |*
-#define HPCF_04		(0x04)/*|   0.45  |   0.9   |   1.8   |   3.5   |*
-#define HPCF_05		(0x05)/*|   0.18  |   0.45  |   0.9   |   1.8   |*
-#define HPCF_06		(0x06)/*|   0.09  |   0.18  |   0.45  |   0.9   |*
-#define HPCF_07		(0x07)/*|   0.045 |   0.09  |   0.18  |   0.45  |*
-#define HPCF_0A		(0x0A)/*|   0.018 |   0.045 |   0.09  |   0.18  |*
-#define HPCF_0B		(0x0B)/*|   0.009 |   0.018 |   0.045 |   0.09  |*
-
-/* CTRL_REG3 bits *
-#define	I2_DRDY		(0x08)  /* Data-ready on DRDY_G*
-#define	I2_WTM		(0x04)
-#define	I2_OVRUN	(0x02)
-#define	I2_EMPTY	(0x01)
-#define	I2_NONE		(0x00)
-#define	I2_MASK		(0x0F)
-
-/* CTRL_REG4 bits *
-#define	FS_MASK		(0x30)
-#define	BDU_ENABLE	(0x80)  /* Block data update. Output registers not updated until MSb and LSb read*
-
-/* CTRL_REG5 bits *
-#define	FIFO_ENABLE	(0x40)
-#define HPF_ENALBE	(0x11)
-
-/* FIFO_CTRL_REG bits *
-#define	FIFO_MODE_MASK		(0xE0)
-#define	FIFO_MODE_BYPASS	(0x00)
-#define	FIFO_MODE_FIFO		(0x20)
-#define	FIFO_MODE_STREAM	(0x40)
-#define	FIFO_MODE_STR2FIFO	(0x60)
-#define	FIFO_MODE_BYPASS2STR	(0x80)
-#define	FIFO_WATERMARK_MASK	(0x1F)
-
-#define FIFO_STORED_DATA_MASK	(0x1F)
-
-#define I2C_AUTO_INCREMENT	(0x80)  /* For multiple byte read*/
-
-/** Registers Contents */
-#define WHOAMI_LSM9DS0_GYR	(0xD4)  /* Expected content for WAI register*/
 
 /*******************************************************************************
  * Function Name	: WriteRegister
@@ -220,13 +68,13 @@ void ReadRegister  ( UINT8 add, UINT8 reg, UINT8* data ) {
 }
 
 /*******************************************************************************
-* Function Name  : ReadGyro
+* Function Name  : ReadGyro_raw
 * Description    : Read the angular velocity values Output Registers
 * Input          : Raw_gyro axis
-* Output         : x,y,z raw_data
+* Output         : x,y,z 16 bits raw_data
 * Return         : None
 *******************************************************************************/
-void ReadGyro ( sensor_raw* raw ) {
+void ReadGyro_raw ( sensor_xyz* raw ) {
 
     UINT8   L_value, H_value;
 
@@ -250,7 +98,7 @@ void ReadGyro ( sensor_raw* raw ) {
 * Output         : x,y,z raw_data
 * Return         : None
 *******************************************************************************/
-void ReadAcc  ( sensor_raw* raw ) {
+void ReadAcc  ( sensor_xyz* raw ) {
 
     UINT8   L_value, H_value;
 
@@ -274,7 +122,7 @@ void ReadAcc  ( sensor_raw* raw ) {
 * Output         : x,y,z raw_data
 * Return         : None
 *******************************************************************************/
-void ReadMag  ( sensor_raw* raw ) {
+void ReadMag  ( sensor_xyz* raw ) {
 
     UINT8   L_value, H_value;
 
@@ -305,4 +153,144 @@ void ReadTemp ( short* temp ) {
     ReadRegister ( Address_XM, OUT_TEMP_L_XM, &L_value );
     ReadRegister ( Address_XM, OUT_TEMP_H_XM, &H_value );
     * temp = ( H_value <<8 | L_value );
+}
+
+/*******************************************************************************
+* Function Name  : GetGyroAddr
+* Description    : Get Gyroscope Address
+* Input          : None
+* Output         : None
+* Return         : uint_8 Addr
+*******************************************************************************/
+UINT8 GetGyroAddr ( void ) {
+
+    ReadRegister (Address_G, WHO_AM_I_G, &buff[0] );
+    return buff[0];
+}
+
+/*******************************************************************************
+* Function Name  : GetAccMagAddr
+* Description    : Get XM module Address
+* Input          : None
+* Output         : None
+* Return         : uint_8 Addr
+*******************************************************************************/
+UINT8 GetAccMagAddr ( void ) {
+
+    ReadRegister (Address_XM, WHO_AM_I_XM, &buff[0] );
+    return buff[0];
+}
+
+/*******************************************************************************
+* Function Name  : GyroEnable
+* Description    : Enable Gyroscope
+* Commands       : GYRO_OFF         - Turn-off gyro module 
+*                  PM_OFF           - Power-down mode 
+*                  PM_NORMAL        - Normal Power mode 
+*                  ENABLE_ALL_AXES  - Enable all Gyro axis
+*                  X_ENABLE         - Enable  X  Gyro axis
+*                  Y_ENABLE         - Enable  Y  Gyro axis
+*                  Z_ENABLE         - Enable  Z  Gyro axis
+*                  BW00             - Defines cut-off according to ODR (See Datasheet)
+*                  BW01             - Defines cut-off according to ODR
+*                  BW10             - Defines cut-off according to ODR
+*                  BW11             - Defines cut-off according to ODR
+*                  G_ODR095         - ODR =  95Hz
+*                  G_ODR190         - ODR = 190Hz
+*                  G_ODR380         - ODR = 380Hz
+*                  G_ODR760         - ODR = 760Hz
+*            -> OR condition between command type
+* Input          : Command
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void GyroEnable ( char command ){
+
+    WriteRegister ( Address_G, CTRL_REG1_G, command );
+}
+
+/*******************************************************************************
+* Function Name  : GyroConfig
+* Description    : Configure Gyroscope
+* Commands       : FS_245_DPS        - Set 245  dps Full-scale
+*                  FS_500_DPS        - Set 500  dps Full-scale
+*                  FS_2000_DPS       - Set 2000 dps Full-scale
+*                  LITTLE_ENDIAN     - Little Endian Data Output
+*              	   BIG_ENDIAN	     - Big Endian Data Output
+*       	   CONTINUOUS_UPDATE - Continuous Block Update
+*       	   BDU_G_ENABLE      - Output registers not updated until MSb and LSb read
+*            -> OR condition between command type
+* Input          : Command
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void GyroConfig ( char command ){
+
+    WriteRegister ( Address_G, CTRL_REG4_G, command );
+}
+
+/*******************************************************************************
+* Function Name  : AccEnableConfig
+* Description    : Enable and Configure Accelerometer
+* Command1       : ACC_OFF          - OFF
+*                  A_ODR3_125       - Acelerometer Data Rate = 3.125Hz
+*                  A_ODR6_25        - ODR = 6.25Hz
+*                  A_ODR12_5        - ODR = 12.5Hz
+*                  A_ODR25          - ODR = 25Hz
+*                  A_ODR50          - ODR = 50Hz
+*                  A_ODR100         - ODR = 100Hz
+*                  A_ODR200         - ODR = 200Hz
+*                  A_ODR400         - ODR = 400Hz
+*                  A_ODR800         - ODR = 800Hz
+*                  A_ODR1600        - ODR = 1600Hz
+*                  CONTINUOUS_UPDATE- Continuous block update
+*                  BDU_A_ENABLE     - Output registers not updated until MSb and LSb read
+*                  ENABLE_ALL_AXES  - Enable all Acc axis
+*                  X_ENABLE         - Enable  X  Acc axis
+*                  Y_ENABLE         - Enable  Y  Acc axis
+*                  Z_ENABLE         - Enable  Z  Acc axis
+*            -> OR condition between command type
+* Command2       : FS_2_G           - Set 2 g Full-scale
+*                  FS_4_G           - Set 4 g Full-scale
+*                  FS_6_G           - Set 6 g Full-scale
+*                  FS_8_G           - Set 8 g Full-scale
+*                  FS_16_G          - Set 16g Full-scale
+*            -> OR condition between command type
+* Input          : command1, command2
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void AccEnableConfig ( char command1, char command2 ){
+
+    WriteRegister ( Address_XM, CTRL_REG1_XM, command1 );
+    WriteRegister ( Address_XM, CTRL_REG2_XM, command2 );
+}
+
+/*******************************************************************************
+* Function Name  : MagEnableConfig
+* Description    : Enable and Configure Magnetometer
+* Command1       : M_ODR3_125       - Magnetometer Data Rate = 3.125Hz
+*                  M_ODR6_25        - ODR = 6.25Hz
+*                  M_ODR12_5        - ODR = 12.5Hz
+*                  M_ODR25          - ODR = 25Hz
+*                  M_ODR50          - ODR = 50Hz
+*                  M_ODR100         - ODR = 100Hz Only if Accelerometer ODR>50Hz
+*                  HIGH_MAG_RES     - High magnetic resolution
+*                  LOW_MAG_RES      - LOW magnetic resolution
+*                  TEMP_EN          - Enable Temperature sensor
+*            -> OR condition between command type
+* Command2       : FS_2_GAUSS       - Set 2 gauss Full-scale
+*                  FS_4_GAUSS       - Set 4 gauss Full-scale
+*                  FS_8_GAUSS       - Set 6 gauss Full-scale
+*                  FS_16_GAUSS      - Set 16gauss Full-scale
+*            -> OR condition between command type
+* Input          : command1, command2
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void MagEnableConfig ( char command1, char command2 ){
+
+    WriteRegister ( Address_XM, CTRL_REG5_XM, command1 );
+    WriteRegister ( Address_XM, CTRL_REG6_XM, command2 );
+    WriteRegister ( Address_XM, CTRL_REG7_XM, 0B00000000 );
 }

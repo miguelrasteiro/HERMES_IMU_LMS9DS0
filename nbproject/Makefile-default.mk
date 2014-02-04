@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c uart.c lsm9ds0.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c uart.c lsm9ds0.c marg.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/lsm9ds0.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/uart.o.d ${OBJECTDIR}/lsm9ds0.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/lsm9ds0.o ${OBJECTDIR}/marg.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/uart.o.d ${OBJECTDIR}/lsm9ds0.o.d ${OBJECTDIR}/marg.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/lsm9ds0.o
+OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/lsm9ds0.o ${OBJECTDIR}/marg.o
 
 # Source Files
-SOURCEFILES=main.c uart.c lsm9ds0.c
+SOURCEFILES=main.c uart.c lsm9ds0.c marg.c
 
 
 CFLAGS=
@@ -109,6 +109,12 @@ ${OBJECTDIR}/lsm9ds0.o: lsm9ds0.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/lsm9ds0.o 
 	@${FIXDEPS} "${OBJECTDIR}/lsm9ds0.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/lsm9ds0.o.d" -o ${OBJECTDIR}/lsm9ds0.o lsm9ds0.c   
 	
+${OBJECTDIR}/marg.o: marg.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/marg.o.d 
+	@${RM} ${OBJECTDIR}/marg.o 
+	@${FIXDEPS} "${OBJECTDIR}/marg.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/marg.o.d" -o ${OBJECTDIR}/marg.o marg.c   
+	
 else
 ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
@@ -127,6 +133,12 @@ ${OBJECTDIR}/lsm9ds0.o: lsm9ds0.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/lsm9ds0.o.d 
 	@${RM} ${OBJECTDIR}/lsm9ds0.o 
 	@${FIXDEPS} "${OBJECTDIR}/lsm9ds0.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/lsm9ds0.o.d" -o ${OBJECTDIR}/lsm9ds0.o lsm9ds0.c   
+	
+${OBJECTDIR}/marg.o: marg.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/marg.o.d 
+	@${RM} ${OBJECTDIR}/marg.o 
+	@${FIXDEPS} "${OBJECTDIR}/marg.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/marg.o.d" -o ${OBJECTDIR}/marg.o marg.c   
 	
 endif
 

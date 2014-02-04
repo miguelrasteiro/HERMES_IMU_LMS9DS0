@@ -1,14 +1,16 @@
-/*
+/**
+ * 
+ * 
  * File:   main.c
  * Author: MiguelRasteiro
  *
  * Created on 29 de Janeiro de 2014, 10:14
  */
-
 #include <p32xxxx.h>
 #include <plib.h>
 #include "pic_config.h"
 #include "lsm9ds0.h"
+#include "marg.h"
 #include "uart.h"
 
 // Configuration Bit settings
@@ -43,41 +45,48 @@ int main(void)
     // UART Variables
     UINT32  menu_choice;
     UINT8   buf[1024];
-    sensor_raw gyro_raw, 
+    sensor_xyz gyro_raw,
                acc_raw,
                mag_raw;
+
+    data_xyz gyro, acc;
+
     short temp;
+    UINT8 test;
+            float x,y,z;
 
 
     initUART();
     OpenI2C1( I2C_EN, BRG );    //Enable I2C channel
+    InitMARG ();
 
-    //activate accelerometer
-    WriteRegister ( Address_XM, CTRL_REG1_XM, 0B00110111 ); // acc odr 12.5 Hz, continuous update, axis enable
-    WriteRegister ( Address_XM, CTRL_REG2_XM, 0B00001000 ); // ±4 g
-    WriteRegister ( Address_XM, CTRL_REG5_XM, 0B11101000 ); // temperature enable, mag high resolution, mag odr 12.5 hz
-    WriteRegister ( Address_XM, CTRL_REG6_XM, 0B00100000 ); // ±4 gauss
-    WriteRegister ( Address_XM, CTRL_REG7_XM, 0B00000000 ); // continuos Mag conversion
-    //activate gyro
-    WriteRegister ( Address_G, CTRL_REG1_G, 0B00001111 );   // gyro enable
-    WriteRegister ( Address_G, CTRL_REG4_G, 0B00010000 );   // 500 dps
-
-    SendDataBuffer(mainMenu, sizeof(mainMenu));
+   // SendDataBuffer(mainMenu, sizeof(mainMenu));
 
     while(1)
     {
-    ReadGyro ( & gyro_raw );
-    ReadAcc  ( & acc_raw  );
-    ReadMag  ( & mag_raw  );
-    ReadTemp ( & temp  );
+    ReadGyro_raw ( & gyro_raw );
+    ReadAcc      ( & acc_raw  );
+    ReadMag      ( & mag_raw  );
+    ReadTemp     ( & temp );
+    ReadGyroXYZ  ( & gyro );
+    ReadAccXYZ   ( & acc  );
 
-    sprintf(buf, " G_X: %.1f G_Y: %.1f G_Z: %.1f",(float) (gyro_raw.x-385)*0.0175,(float) (gyro_raw.y-50)*0.0175,(float) (gyro_raw.z-125)*0.0175 );
+
+//test=GetAccMagAddr ();
+//    x=(float) acc_raw.x*0.000122;
+//    y=(float) acc_raw.y*0.000122;
+//    z=(float) acc_raw.z*0.000122 ;
+//    sprintf(buf, " G_X: %f G_Y: %f G_Z: %f",(float) gyro_raw.x,(float) gyro_raw.y,(float) gyro_raw.z );
+  //  SendDataBuffer(buf, strlen(buf));
+//    sprintf(buf, " G_X: %f G_Y: %f G_Z: %f\n",(float) gyro.x,(float) gyro.y,(float) gyro.z );
+  //  SendDataBuffer(buf, strlen(buf));
+    sprintf(buf, "%f %f %f",(float) acc_raw.x*0.00012207,(float) acc_raw.y*0.00012207,(float) acc_raw.z*0.00012207 );
     SendDataBuffer(buf, strlen(buf));
-    sprintf(buf, " A_X: %.1f A_Y: %.1f A_Z: %.1f",(float) acc_raw.x*0.000122,(float) acc_raw.y*0.000122,(float) acc_raw.z*0.000122 );
+    sprintf(buf, " %f %f %f",(float) acc.x*0.00012207,(float) acc.y*0.00012207,(float) acc.z*0.00012207 );
     SendDataBuffer(buf, strlen(buf));
-    sprintf(buf, " M_X: %.1f M_Y: %.1f M_Z: %.1f",(float) mag_raw.x*0.016,(float) mag_raw.y*0.016,(float) mag_raw.z*0.016 );
-    SendDataBuffer(buf, strlen(buf));
-    sprintf(buf, " Temp: %d \n", temp );
+ //   sprintf(buf, " M_X: %.1f M_Y: %.1f M_Z: %.1f",(float) mag_raw.x*0.016,(float) mag_raw.y*0.016,(float) mag_raw.z*0.016 );
+//    SendDataBuffer(buf, strlen(buf));
+    sprintf(buf, " %d\n", temp );
     SendDataBuffer(buf, strlen(buf));
 
 
