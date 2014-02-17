@@ -1,5 +1,4 @@
-// ----------------------------------------------------------------------------
-/**
+ /** ----------------------------------------------------------------------------
    @file     lsm9ds0.h
    A LSM9DS0 driver for PIC32MX7XX \n
    Language: C++ \n
@@ -23,99 +22,98 @@
 #define	LSM9DS0_H
 
 #include <plib.h>
-//  LSM9DS0 Registers
-// \def MAADSDKdslkanfdslkddfsdfsdfdsfsdfsdfdsfdsf
-#define OUT_TEMP_L_XM       (0x05)    // TEMPERATURE OUT LSB REGISTER
-#define OUT_TEMP_H_XM       (0x06)    // TEMPERATURE OUT MSB REGISTER */
-#define STATUS_REG_M        (0x07)    // STATUS MAGNETOMETER
-#define OUT_X_L_M           (0x08)    // X AXIS OUT LSB REG MAG    
-#define OUT_X_H_M           (0x09)    // X AXIS OUT MSB REG MAG
-#define OUT_Y_L_M           (0x0A)    // Y AXIS OUT LSB REG MAG
-#define OUT_Y_H_M           (0x0B)    // Y AXIS OUT MSB REG MAG
-#define OUT_Z_L_M           (0x0C)    // Z AXIS OUT LSB REG MAG
-#define OUT_Z_H_M           (0x0D)    // Z AXIS OUT MSB REG MAG
-#define WHO_AM_I_G          (0x0F)    // WHO AM I GYRO
-#define WHO_AM_I_XM         (0x0F)    // WHO AM I MAG AND ACC
-#define INT_CTRL_REG_M      (0x12)    // INTERRUPT CTRL REG MAG
-#define INT_SRC_REG_M       (0x13)    // INTERRUPT SOURCE REG MAG
-#define INT_THS_L_M         (0x14)    // INTERRUPT TSH REG MAG
-#define INT_THS_H_M         (0x15)    // INTERRUPT TSH REG MAG
-#define OFFSET_X_L_M        (0x16)    // X AXIS OFFSET LSB REG MAG
-#define OFFSET_X_H_M        (0x17)    // X AXIS OFFSET MSB REG MAG
-#define OFFSET_Y_L_M        (0x18)    // Y AXIS OFFSET LSB REG MAG
-#define OFFSET_Y_H_M        (0x19)    // Y AXIS OFFSET MSB REG MAG
-#define OFFSET_Z_L_M        (0x1A)    // Z AXIS OFFSET LSB REG MAG
-#define OFFSET_Z_H_M        (0x1B)    // Z AXIS OFFSET MSB REG MAG
-#define REFERENCE_X         (0x1C)    // REF X AXIS
-#define REFERENCE_Y         (0x1D)    // REF Y AXIS
-#define REFERENCE_Z         (0x1E)    // REF Z AXIS
-#define CTRL_REG0_XM        (0x1F)    // CTRL REG0 MAG AND ACC
-#define CTRL_REG1_XM        (0x20)    // CTRL REG1 MAG AND ACC
-#define CTRL_REG1_G         (0x20)    // CTRL REG1 GYRO
-#define CTRL_REG2_XM        (0x21)    // CTRL REG2 MAG AND ACC
-#define CTRL_REG2_G         (0x21)    // CTRL REG2 GYRO
-#define CTRL_REG3_XM        (0x22)    // CTRL_REG3 MAG AND ACC
-#define CTRL_REG3_G         (0x22)    // CTRL REG3 GYRO
-#define CTRL_REG4_XM        (0x23)    // CTRL_REG4 MAG AND ACC
-#define CTRL_REG4_G         (0x23)    // CTRL REG4 GYRO
-#define CTRL_REG5_XM        (0x24)    // CTRL_REG5 MAG AND ACC
-#define CTRL_REG5_G         (0x24)    // CTRL REG5 GYRO
-#define CTRL_REG6_XM        (0x25)    // CTRL_REG6 MAG AND ACC
-#define	REFERENCE_G         (0x25)    // REFERENCE REG GYRO
-#define CTRL_REG7_XM        (0x26)    // CTRL_REG7 MAG AND ACC
-#define STATUS_REG_G        (0x27)    // STATUS REG GYRO
-#define STATUS_REG_A        (0x27)    // STATUS REG ACC
-#define	OUT_X_L_G           (0x28)    // X AXIS OUT LSB REG GYRO
-#define	OUT_X_L_A           (0x28)    // X AXIS OUT LSB REG ACC
-#define	OUT_X_H_G           (0x29)    // X AXIS OUT MSB REG GYRO
-#define	OUT_X_H_A           (0x29)    // X AXIS OUT MSB REG ACC
-#define	OUT_Y_L_G           (0x2A)    // Y AXIS OUT LSB REG GYRO
-#define	OUT_Y_L_A           (0x2A)    // Y AXIS OUT LSB REG ACC
-#define	OUT_Y_H_G           (0x2B)    // Y AXIS OUT MSB REG GYRO
-#define	OUT_Y_H_A           (0x2B)    // Y AXIS OUT MSB REG ACC
-#define	OUT_Z_L_G           (0x2C)    // Z AXIS OUT LSB REG GYRO
-#define	OUT_Z_L_A           (0x2C)    // Z AXIS OUT LSB REG ACC
-#define	OUT_Z_H_G           (0x2D)    // Z AXIS OUT MSB REG GYRO
-#define	OUT_Z_H_A           (0x2D)    // Z AXIS OUT MSB REG ACC
-#define	FIFO_CTRL_REG       (0x2E)    // FIFO CONTROL REGISTER
-#define FIFO_SRC_REG        (0x2F)    // FIFO SOURCE REGISTER
-#define	INT1_CFG            (0x30)    //
-#define	INT_GEN_1_REG       (0x30)    //
-#define	INT1_SRC            (0x31)    //
-#define	INT_GEN_1_SRC       (0x31)    //
-#define	INT1_TSH_XH         (0x32)    //
-#define	INT_GEN_1_THS       (0x32)    //
-#define	INT1_TSH_XL         (0x33)    //
-#define	INT_GEN_1_DURATION  (0x33)    //
-#define	INT1_TSH_YH         (0x34)    //
-#define	INT_GEN_2_REG       (0x34)    //
-#define	INT1_TSH_YL         (0x35)    //
-#define	INT_GEN_2_SRC       (0x35)    //
-#define	INT1_TSH_ZH         (0x36)    //
-#define	INT_GEN_2_THS       (0x36)    //
-#define	INT1_TSH_ZL         (0x37)    //
-#define	INT_GEN_2_DURATION  (0x37)    //
-#define	INT1_DURATION       (0x38)    //
-#define	CLICK_CFG           (0x38)    //
-#define	CLICK_SRC           (0x39)    //
-#define	CLICK_THS           (0x3A)    //
-#define	TIME_LIMIT          (0x3B)    //
-#define	TIME_LATENCY        (0x3C)    //
-#define	TIME_WINDOW         (0x3D)    //
-#define	Act_THS             (0x3E)    //
-#define	Act_DUR             (0x3F)    //
 
-#define Read                (0x01)
-#define Write               (0x00)
-#define Address_XM          (0x3A)    // SAO_MX TO VDD  */
-#define Address_G           (0xD6)    // SAO_G TO VDD   */
-//#define Address_XM          (0x3C)    // SAO_MX TO GND  */
-//#define Address_G           (0xD4)    // SAO_G TO GND   */
+//  LSM9DS0 Registers
+#define OUT_TEMP_L_XM       (0x05)  // TEMPERATURE OUT LSB REGISTER
+#define OUT_TEMP_H_XM       (0x06)  // TEMPERATURE OUT MSB REGISTER
+#define STATUS_REG_M        (0x07)  // STATUS MAGNETOMETER
+#define OUT_X_L_M           (0x08)  // X AXIS OUT LSB REG MAG    
+#define OUT_X_H_M           (0x09)  // X AXIS OUT MSB REG MAG
+#define OUT_Y_L_M           (0x0A)  // Y AXIS OUT LSB REG MAG
+#define OUT_Y_H_M           (0x0B)  // Y AXIS OUT MSB REG MAG
+#define OUT_Z_L_M           (0x0C)  // Z AXIS OUT LSB REG MAG
+#define OUT_Z_H_M           (0x0D)  // Z AXIS OUT MSB REG MAG
+#define WHO_AM_I_G          (0x0F)  // WHO AM I GYRO
+#define WHO_AM_I_XM         (0x0F)  // WHO AM I MAG AND ACC
+#define INT_CTRL_REG_M      (0x12)  // INTERRUPT CTRL REG MAG
+#define INT_SRC_REG_M       (0x13)  // INTERRUPT SOURCE REG MAG
+#define INT_THS_L_M         (0x14)  // INTERRUPT TSH REG MAG
+#define INT_THS_H_M         (0x15)  // INTERRUPT TSH REG MAG
+#define OFFSET_X_L_M        (0x16)  // X AXIS OFFSET LSB REG MAG
+#define OFFSET_X_H_M        (0x17)  // X AXIS OFFSET MSB REG MAG
+#define OFFSET_Y_L_M        (0x18)  // Y AXIS OFFSET LSB REG MAG
+#define OFFSET_Y_H_M        (0x19)  // Y AXIS OFFSET MSB REG MAG
+#define OFFSET_Z_L_M        (0x1A)  // Z AXIS OFFSET LSB REG MAG
+#define OFFSET_Z_H_M        (0x1B)  // Z AXIS OFFSET MSB REG MAG
+#define REFERENCE_X         (0x1C)  // REF X AXIS
+#define REFERENCE_Y         (0x1D)  // REF Y AXIS
+#define REFERENCE_Z         (0x1E)  // REF Z AXIS
+#define CTRL_REG0_XM        (0x1F)  // CTRL REG0 MAG AND ACC
+#define CTRL_REG1_XM        (0x20)  // CTRL REG1 MAG AND ACC
+#define CTRL_REG1_G         (0x20)  // CTRL REG1 GYRO
+#define CTRL_REG2_XM        (0x21)  // CTRL REG2 MAG AND ACC
+#define CTRL_REG2_G         (0x21)  // CTRL REG2 GYRO
+#define CTRL_REG3_XM        (0x22)  // CTRL_REG3 MAG AND ACC
+#define CTRL_REG3_G         (0x22)  // CTRL REG3 GYRO
+#define CTRL_REG4_XM        (0x23)  // CTRL_REG4 MAG AND ACC
+#define CTRL_REG4_G         (0x23)  // CTRL REG4 GYRO
+#define CTRL_REG5_XM        (0x24)  // CTRL_REG5 MAG AND ACC
+#define CTRL_REG5_G         (0x24)  // CTRL REG5 GYRO
+#define CTRL_REG6_XM        (0x25)  // CTRL_REG6 MAG AND ACC
+#define	REFERENCE_G         (0x25)  // REFERENCE REG GYRO
+#define CTRL_REG7_XM        (0x26)  // CTRL_REG7 MAG AND ACC
+#define STATUS_REG_G        (0x27)  // STATUS REG GYRO
+#define STATUS_REG_A        (0x27)  // STATUS REG ACC
+#define	OUT_X_L_G           (0x28)  // X AXIS OUT LSB REG GYRO
+#define	OUT_X_L_A           (0x28)  // X AXIS OUT LSB REG ACC
+#define	OUT_X_H_G           (0x29)  // X AXIS OUT MSB REG GYRO
+#define	OUT_X_H_A           (0x29)  // X AXIS OUT MSB REG ACC
+#define	OUT_Y_L_G           (0x2A)  // Y AXIS OUT LSB REG GYRO
+#define	OUT_Y_L_A           (0x2A)  // Y AXIS OUT LSB REG ACC
+#define	OUT_Y_H_G           (0x2B)  // Y AXIS OUT MSB REG GYRO
+#define	OUT_Y_H_A           (0x2B)  // Y AXIS OUT MSB REG ACC
+#define	OUT_Z_L_G           (0x2C)  // Z AXIS OUT LSB REG GYRO
+#define	OUT_Z_L_A           (0x2C)  // Z AXIS OUT LSB REG ACC
+#define	OUT_Z_H_G           (0x2D)  // Z AXIS OUT MSB REG GYRO
+#define	OUT_Z_H_A           (0x2D)  // Z AXIS OUT MSB REG ACC
+#define	FIFO_CTRL_REG       (0x2E)  // FIFO CONTROL REGISTER
+#define FIFO_SRC_REG        (0x2F)  // FIFO SOURCE REGISTER
+#define	INT1_CFG            (0x30)  //
+#define	INT_GEN_1_REG       (0x30)  //
+#define	INT1_SRC            (0x31)  //
+#define	INT_GEN_1_SRC       (0x31)  //
+#define	INT1_TSH_XH         (0x32)  //
+#define	INT_GEN_1_THS       (0x32)  //
+#define	INT1_TSH_XL         (0x33)  //
+#define	INT_GEN_1_DURATION  (0x33)  //
+#define	INT1_TSH_YH         (0x34)  //
+#define	INT_GEN_2_REG       (0x34)  //
+#define	INT1_TSH_YL         (0x35)  //
+#define	INT_GEN_2_SRC       (0x35)  //
+#define	INT1_TSH_ZH         (0x36)  //
+#define	INT_GEN_2_THS       (0x36)  //
+#define	INT1_TSH_ZL         (0x37)  //
+#define	INT_GEN_2_DURATION  (0x37)  //
+#define	INT1_DURATION       (0x38)  //
+#define	CLICK_CFG           (0x38)  //
+#define	CLICK_SRC           (0x39)  //
+#define	CLICK_THS           (0x3A)  //
+#define	TIME_LIMIT          (0x3B)  //
+#define	TIME_LATENCY        (0x3C)  //
+#define	TIME_WINDOW         (0x3D)  //
+#define	Act_THS             (0x3E)  //
+#define	Act_DUR             (0x3F)  //
+
+#define Read                (0x01)  // Mask for Read
+#define Write               (0x00)  // Mask for Write
+#define Address_XM          (0x3A)  // SAO_MX TO VDD
+#define Address_G           (0xD6)  // SAO_G TO VDD
+//#define Address_XM          (0x3C)  // SAO_MX TO GND
+//#define Address_G           (0xD4)  // SAO_G TO GND
 
 // CTRL_GYRO_REG1 
-#define GYRO_OFF            (0x00)  // Off
-#define PM_OFF              (0x00)  // Power-down mode 
-#define PM_NORMAL           (0x08)  // Normal Power mode 
+#define GYRO_OFF            (0x00)  // Power-down mode
+#define GYRO_ON             (0x08)  // Normal Power mode
 #define ENABLE_ALL_AXES     (0x07)  // Enable all Gyro axis
 #define X_ENABLE            (0x02)  // Enable X Gyro axis
 #define Y_ENABLE            (0x01)  // Enable Y Gyro axis
@@ -132,7 +130,7 @@
 // CTRL_GYRO_REG2
 #define NORMAL_MODE_RR      (0x00)  // Normal mode (reset reading HP_RESET_FILTER
 #define RF_FILT             (0x10)  // Reference signal for filtering
-#define NORMAL_MODE         (0x20)
+#define NORMAL_MODE         (0x20)  // Normal mode
 #define AUTORST_INT         (0x30)  // Autoreset on interrupt event
                                // ODR |  95 Hz  |  190Hz  |  380Hz  |  720Hz  |
 #define HPCF_00             (0x00)  //|   7.2   |   13.5  |   27    |   51.4  |
@@ -199,59 +197,112 @@
 #define	FS_16_GAUSS         (0x60)  // 16gauss Full-scale
 
 
-#define I2C_AUTO_INCREMENT	(0x80)  // For multiple byte read
+#define I2C_AUTO_INCREMENT  (0x80)  // For multiple byte read
 
 /* Registers Contents */
-#define WHOAMI_LSM9DS0_GYR	(0xD4)  // Expected content for WAI register
-#define WHOAMI_LSM9DS0_XM	(0x49)  // Expected content for WAI register
+#define WHOAMI_LSM9DS0_GYRO (0xD4)  // Expected content for WAI register
+#define WHOAMI_LSM9DS0_XM   (0x49)  // Expected content for WAI register
 
 /*************** VAR ****************/
+/** \typedef  typedef struct {short x,y,z;} sensor_xyz;
+\brief        Saves Raw data from sensors.
+\param        sensor_xyz.x - type short (16bits)) saves data from x-axis.
+              sensor_xyz.y - type short (16bits)) saves data from y-axis.
+              sensor_xyz.z - type short (16bits)) saves data from z-axis.*/
 typedef struct {
    short  	x,	 // x-axis data.
                 y,	 // y-axis data.
                 z;	 // z-axis data.
 }sensor_xyz ;
 
-UINT8 buff[2];  //NAO POSSO DECLARAR NO HEADER?
+UINT8 buff[2];           // Auxiliary buffer
+
 /************ FUNCTIONS ************/
-/** \fn     void  ReadGyro_raw (sensor_xyz*  raw)
+/** \fn     void  ReadGyroRaw (sensor_xyz*  raw)
 \brief      Read raw gyro data.
-\param      [out] struct sensor_xyz pointer (type short (16bits)).
+\param      [in/out] struct sensor_xyz pointer (type short (16bits)).
 \return     None. */
-void  ReadGyro_raw    ( sensor_xyz*  raw   );
-/** \fn     void  ReadAcc (sensor_xyz*  raw)
+void  ReadGyroRaw    ( sensor_xyz*  raw   );
+/** \fn     void  ReadAccRaw (sensor_xyz*  raw)
 \brief      Read raw accelerometer data.
-\param      [out] struct sensor_xyz pointer (type short (16bits)).
+\param      [in/out] struct sensor_xyz pointer (type short (16bits)).
 \return     None. */
-void  ReadAcc         ( sensor_xyz*  raw   );
-/** \fn     void  ReadMag (sensor_xyz*  raw)
+void  ReadAccRaw      ( sensor_xyz*  raw   );
+/** \fn     void  ReadMagRaw (sensor_xyz*  raw)
 \brief      Read raw magnetometer data.
-\param      [out] struct sensor_xyz pointer (type short (16bits)).
+\param      [in/out] struct sensor_xyz pointer (type short (16bits)).
 \return     None. */
-void  ReadMag         ( sensor_xyz*  raw   );
+void  ReadMagRaw         ( sensor_xyz*  raw   );
 /** \fn     void  ReadTemp (short*  temperature)
 \brief      Read temperature raw data.
-\param      [out] temperature pointer (type short (16bits)).
+\param      [in/out] temperature pointer (type short (16bits)).
 \return     None. */
 void  ReadTemp        ( short* temperature );
 /** \fn     void  GyroEnable (char command)
 \brief      Enable Gyro sensor.
 \param      [in] command Configures CTRL_GYRO_REG1.
+            \n Command1     : GYRO_OFF         - Turn-off gyro module
+            \n                GYRO_ON          - Normal Power mode
+            \n                ENABLE_ALL_AXES  - Enable all Gyro axis
+            \n                X_ENABLE         - Enable  X  Gyro axis
+            \n                Y_ENABLE         - Enable  Y  Gyro axis
+            \n                Z_ENABLE         - Enable  Z  Gyro axis
+            \n                BW00             - Defines cut-off according to ODR (See Datasheet)
+            \n                BW01             - Defines cut-off according to ODR
+            \n                BW10             - Defines cut-off according to ODR
+            \n                BW11             - Defines cut-off according to ODR
+            \n                G_ODR095         - ODR =  95Hz
+            \n                G_ODR190         - ODR = 190Hz
+            \n                G_ODR380         - ODR = 380Hz
+            \n                G_ODR760         - ODR = 760Hz
+            \n           -> OR condition between command type
 \return     None. */
 void  GyroEnable      ( char command );
 /** \fn     void  GyroConfig (char command)
 \brief      Configure Gyro sensor.
 \param      [in] command Configures CTRL_GYRO_REG4.
+            \n Command     :  FS_245_DPS        - Set 245  dps Full-scale
+            \n                FS_500_DPS        - Set 500  dps Full-scale
+            \n                FS_2000_DPS       - Set 2000 dps Full-scale
+            \n                LITTLE_ENDIAN     - Little Endian Data Output
+            \n                BIG_ENDIAN        - Big Endian Data Output
+            \n       	      CONTINUOUS_UPDATE - Continuous Block Update
+            \n       	      BDU_G_ENABLE      - Output registers not updated until MSb and LSb read
+            \n         --> OR condition between command type
 \return     None. */
 void  GyroConfig      ( char command );
 /** \fn     void  AccEnableConfig (char command1, char command2)
 \brief      Enable and Configure Acc sensor.
 \param      [in] command1 Configures CTRL_XM_REG1.
+            \n Command1     : ACC_OFF          - OFF
+            \n                A_ODR3_125       - Acelerometer Data Rate = 3.125Hz
+            \n                A_ODR6_25        - ODR = 6.25Hz
+            \n                A_ODR12_5        - ODR = 12.5Hz
+            \n                A_ODR25          - ODR = 25Hz
+            \n                A_ODR50          - ODR = 50Hz
+            \n                A_ODR100         - ODR = 100Hz
+            \n                A_ODR200         - ODR = 200Hz
+            \n                A_ODR400         - ODR = 400Hz
+            \n                A_ODR800         - ODR = 800Hz
+            \n                A_ODR1600        - ODR = 1600Hz
+            \n                CONTINUOUS_UPDATE- Continuous block update
+            \n                BDU_A_ENABLE     - Output registers not updated until MSb and LSb read
+            \n                ENABLE_ALL_AXES  - Enable all Acc axis
+            \n                X_ENABLE         - Enable  X  Acc axis
+            \n                Y_ENABLE         - Enable  Y  Acc axis
+            \n                Z_ENABLE         - Enable  Z  Acc axis
+            \n         --> OR condition between command type
 \param      [in] command2 Configures CTRL_XM_REG2.
+            \n Command2     : FS_2_G           - Set 2 g Full-scale
+            \n                FS_4_G           - Set 4 g Full-scale
+            \n                FS_6_G           - Set 6 g Full-scale
+            \n                FS_8_G           - Set 8 g Full-scale
+            \n                FS_16_G          - Set 16g Full-scale
+            \n         --> OR condition between command type
 \return     None. */
 void  AccEnableConfig ( char command1, char command2 );
 /** \fn     void  MagEnableConfig (char command1, char command2)
-\brief      Enable and Configure Acc sensor.
+\brief      Enable and Configure Mag sensor.
 \param      [in] command1 Configures CTRL_XM_REG5.
             \n Command1     : M_ODR3_125     - Magnetometer Data Rate = 3.125Hz
             \n                M_ODR6_25      - ODR = 6.25Hz
@@ -260,7 +311,7 @@ void  AccEnableConfig ( char command1, char command2 );
             \n                M_ODR50        - ODR = 50Hz
             \n                M_ODR100       - ODR = 100Hz Only if Accelerometer ODR>50Hz
             \n                HIGH_MAG_RES   - High magnetic resolution
-            \n                LOW_MAG_RES    - LOW magnetic resolution
+            \n                LOW_MAG_RES    - Low magnetic resolution
             \n                TEMP_EN        - Enable Temperature sensor
             \n         --> OR condition between command type
 \param      [in] command2 Configures CTRL_XM_REG6.
@@ -271,8 +322,15 @@ void  AccEnableConfig ( char command1, char command2 );
             \n         --> OR condition between command type
 \return     None. */
 void  MagEnableConfig ( char command1, char command2 );
-
+/** \fn     void  GetGyroAddr ( void )
+\brief      Get Gyro module Address.
+\param      None.
+\return     uint_8 Address. */
 UINT8 GetGyroAddr   ( void );
+/** \fn     void  GetAccMagAddr ( void )
+\brief      Get XM module Address.
+\param      None.
+\return     uint_8 Address. */
 UINT8 GetAccMagAddr ( void );
 
 /* Private */

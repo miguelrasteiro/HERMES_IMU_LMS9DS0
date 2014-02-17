@@ -13,7 +13,7 @@ void ReadGyroXYZ ( data_xyz* data ) {
     sensor_xyz reading;
  //   short temp;
 
-    ReadGyro_raw ( &reading );
+    ReadGyroRaw ( &reading );
  //   ReadTemp     ( & temp  );
     data->x = (float) reading.x - gyro_offsets[0];
     data->y = (float) reading.y - gyro_offsets[1];
@@ -26,7 +26,7 @@ void ReadAccXYZ ( data_xyz* data ) {
 //    short temp = 0;           //COrriggir para poder funcionar sem correcçao de temperatura
 //    float x, y, z;
 
-    ReadAcc   ( &reading );
+    ReadAccRaw   ( &reading );
 //    ReadTemp  ( & temp  );
     // Offset removal
     data->x = (float) reading.x - acc_offsets[0] ;
@@ -49,7 +49,7 @@ void CalibrateAcc ( void ) {
 
     for ( i=0; i<128; i++ ) {           // Take a number of readings and average them
                                         // to calculate any bias the accelerometer may have.
-        ReadAcc ( &cal_readings );
+        ReadAccRaw ( &cal_readings );
 
         cal_sum[0] += (float) cal_readings.x;
         cal_sum[1] += (float) cal_readings.y;
@@ -67,12 +67,12 @@ void CalibrateGyro ( void ) {
     int i;
 /*
     for ( i=0; i<128; i++ ) {         // training readings for warming
-        ReadGyro_raw ( &cal_readings );
+        ReadGyroRaw ( &cal_readings );
     }
 */
     for ( i=0; i<128; i++ ) {
 
-        ReadGyro_raw ( &cal_readings );
+        ReadGyroRaw ( &cal_readings );
 
         cal_sum[0] += (float) cal_readings.x;
         cal_sum[1] += (float) cal_readings.y;
@@ -87,7 +87,7 @@ void InitMARG ( void ){
 
     MagEnableConfig ( TEMP_EN | HIGH_MAG_RES | M_ODR50, FS_4_GAUSS );
     AccEnableConfig ( CONTINUOUS_UPDATE | ENABLE_ALL_AXES | A_ODR50, ABW50 | FS_4_G );
-    GyroEnable      ( G_ODR380 | BW10 | PM_NORMAL | ENABLE_ALL_AXES );
+    GyroEnable      ( G_ODR380 | BW10 | GYRO_ON | ENABLE_ALL_AXES );
     GyroConfig      ( CONTINUOUS_UPDATE | FS_500_DPS | LITTLE_ENDIAN);
 
     CalibrateGyro ();

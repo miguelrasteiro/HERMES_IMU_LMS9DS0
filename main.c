@@ -64,18 +64,14 @@ int main(void)
 
     while(1)
     {
-    ReadGyro_raw ( & gyro_raw );
-    ReadAcc      ( & acc_raw  );
-    ReadMag      ( & mag_raw  );
+    ReadGyroRaw ( & gyro_raw );
+    ReadAccRaw   ( & acc_raw  );
+    ReadMagRaw   ( & mag_raw  );
     ReadTemp     ( & temp );
     ReadGyroXYZ  ( & gyro );
     ReadAccXYZ   ( & acc  );
 
-
 //test=GetAccMagAddr ();
-//    x=(float) acc_raw.x*0.000122;
-//    y=(float) acc_raw.y*0.000122;
-//    z=(float) acc_raw.z*0.000122 ;
 //    sprintf(buf, " G_X: %f G_Y: %f G_Z: %f",(float) gyro_raw.x,(float) gyro_raw.y,(float) gyro_raw.z );
   //  SendDataBuffer(buf, strlen(buf));
 //    sprintf(buf, " G_X: %f G_Y: %f G_Z: %f\n",(float) gyro.x,(float) gyro.y,(float) gyro.z );
@@ -88,7 +84,6 @@ int main(void)
 //    SendDataBuffer(buf, strlen(buf));
     sprintf(buf, " %d\n", temp );
     SendDataBuffer(buf, strlen(buf));
-
 
 /*
         menu_choice = GetMenuChoice();
@@ -109,7 +104,6 @@ int main(void)
 
         }*/
     }
-
     return -1;
 }
 

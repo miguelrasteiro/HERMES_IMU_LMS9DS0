@@ -68,13 +68,13 @@ void ReadRegister  ( UINT8 add, UINT8 reg, UINT8* data ) {
 }
 
 /*******************************************************************************
-* Function Name  : ReadGyro_raw
+* Function Name  : ReadGyroRaw
 * Description    : Read the angular velocity values Output Registers
 * Input          : Raw_gyro axis
 * Output         : x,y,z 16 bits raw_data
 * Return         : None
 *******************************************************************************/
-void ReadGyro_raw ( sensor_xyz* raw ) {
+void ReadGyroRaw ( sensor_xyz* raw ) {
 
     UINT8   L_value, H_value;
 
@@ -92,13 +92,13 @@ void ReadGyro_raw ( sensor_xyz* raw ) {
 }
 
 /*******************************************************************************
-* Function Name  : ReadAcc
+* Function Name  : ReadAccRaw
 * Description    : Read the accelaration values Output Registers
 * Input          : Raw_acc axis
 * Output         : x,y,z raw_data
 * Return         : None
 *******************************************************************************/
-void ReadAcc  ( sensor_xyz* raw ) {
+void ReadAccRaw  ( sensor_xyz* raw ) {
 
     UINT8   L_value, H_value;
 
@@ -116,13 +116,13 @@ void ReadAcc  ( sensor_xyz* raw ) {
 }
 
 /*******************************************************************************
-* Function Name  : ReadMag
+* Function Name  : ReadMagRaw
 * Description    : Read the magnetic values Output Registers
 * Input          : Raw_mag axis
 * Output         : x,y,z raw_data
 * Return         : None
 *******************************************************************************/
-void ReadMag  ( sensor_xyz* raw ) {
+void ReadMagRaw  ( sensor_xyz* raw ) {
 
     UINT8   L_value, H_value;
 
@@ -185,8 +185,7 @@ UINT8 GetAccMagAddr ( void ) {
 * Function Name  : GyroEnable
 * Description    : Enable Gyroscope
 * Commands       : GYRO_OFF         - Turn-off gyro module 
-*                  PM_OFF           - Power-down mode 
-*                  PM_NORMAL        - Normal Power mode 
+*                  GYRO_ON          - Normal Power mode
 *                  ENABLE_ALL_AXES  - Enable all Gyro axis
 *                  X_ENABLE         - Enable  X  Gyro axis
 *                  Y_ENABLE         - Enable  Y  Gyro axis
