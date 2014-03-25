@@ -1,22 +1,21 @@
-/***************************** EE-ESTG-IPLEIRA *********************************
-*
-* File Name		: lsm9ds0_gyro.c
-* Author		: Miguel Rasteiro
-* Version		: V 1.0
-* Date			: 29 de Janeiro de 2014, 10:14
-* Description		: LSM9DS0 digital output gyroscope sensor
- *
-********************************************************************************
-*
-*
-********************************************************************************
-* REVISON HISTORY
-*
-| VERSION	| DATE		| AUTHORS	  | DESCRIPTION
-|               |               |                 |
-| 1.0		| 29/1/2014	| MR              | First Release
-|               |               |                 |
-*******************************************************************************/
+ /**
+  * \addtogroup lsm9ds0
+  * \{
+  * \file lsm9ds0.c
+  * \author Miguel Rasteiro \n\t
+  * \brief LSM9DS0 basic driver \n
+  * \version  Version 1.0 Release 1 \n
+  * \date     29 de January de 2014, 10:14 \n\n
+  * \ref license \n\n
+  *    Change History:
+  * ************************************************************************
+  * | VERSION      | DATE	    | AUTHORS	  | DESCRIPTION            |
+  * |:------------:|:--------------:|:------------|:-----------------------|
+  * | 1.0          |   29/1/2014    | MR          | First Release          |
+  * \n\n
+  * \section lsm9ds0code LSM9DS0 Source Code
+  * \code
+  */
 #include "lsm9ds0.h"
 #include <plib.h>
 
@@ -293,3 +292,4 @@ void MagEnableConfig ( char command1, char command2 ){
     WriteRegister ( Address_XM, CTRL_REG6_XM, command2 );
     WriteRegister ( Address_XM, CTRL_REG7_XM, 0B00000000 );
 }
+/**\endcode \}*/

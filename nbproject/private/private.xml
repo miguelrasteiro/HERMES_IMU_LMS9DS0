@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1">
+        <file>
+            <url>marg.c</url>
+            <line>22</line>
+        </file>
+    </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
         <file>file:/Users/MiguelRasteiro/Documents/MPLABX/Projects/LSM9DS0.X/main.c</file>
         <file>file:/Users/MiguelRasteiro/Documents/MPLABX/Projects/LSM9DS0.X/lsm9ds0.h</file>
