@@ -40,8 +40,8 @@
 #define BRG         100000//(PBCLK/2/Fsck)                         /**< I2C frequency */
 #define TIMER_1_INT_VECTOR 4                                       /**< Interruption Vector */
 
-#define ACC_EXT_CAL 1                   /**< 1 - Using Calibrated Matrix; 0 - Default */
-#define MAG_EXT_CAL 1                   /**< 1 - Using Calibrated Matrix; 0 - Default */
+#define ACC_EXT_CAL 0                   /**< 1 - Using Calibrated Matrix; 0 - Default */
+#define MAG_EXT_CAL 0                   /**< 1 - Using Calibrated Matrix; 0 - Default */
 
 #define Gyrodps     SENSITIVITY_500DPS  /**< Define gyro sensitivity in use */
 #define AccG        SENSITIVITY_ACC_4G  /**< Define acc sensitivity in use */
@@ -133,7 +133,7 @@ int main(void)
         ReadGyroXYZ  ( & gyro );
         ReadAccXYZ   ( & acc  );
         ReadMagXYZ   ( & mag  );
-        //ReadAccRaw   ( & acc_raw  );
+//        ReadGyroRaw   ( & gyro_raw  );
 
         temptime = ReadTimer1(); // Reads time elapsed
         WriteTimer1(0x00);  // Timer set to 0
@@ -142,6 +142,8 @@ int main(void)
 
         sprintf(buf," %f %f %f",(float) gyro.x*Gyrodps,(float) gyro.y*Gyrodps,(float) gyro.z*Gyrodps );
         SendDataBuffer(buf, strlen(buf));
+//        sprintf(buf," %f %f %f",(float) gyro_raw.x*Gyrodps,(float) gyro_raw.y*Gyrodps,(float) gyro_raw.z*Gyrodps );
+//        SendDataBuffer(buf, strlen(buf));
         sprintf(buf," %f %f %f",(float) acc.x*AccG,(float) acc.y*AccG,(float) acc.z*AccG );//,(float) acc_raw.x,(float) acc_raw.y,(float) acc_raw.z );//
         SendDataBuffer(buf, strlen(buf));
         sprintf(buf," %f %f %f",(float) mag.x*MagGauss,(float) mag.y*MagGauss,(float) mag.z*MagGauss );
