@@ -19,8 +19,10 @@
 #include "lsm9ds0.h"
 #include "marg.h"
 
-#define WARMUP_READINGS  64.0    /**< Number of warmup readings for sensors calibration */
-#define AVERAGE_READINGS  128.0  /**< Number of readings for average sensors offsets */
+#define WARMUP_READINGS  256.0    /**< Number of warmup readings for sensors calibration */
+#define AVERAGE_READINGS  256.0  /**< Number of readings for average sensors offsets */
+#define AccG        SENSITIVITY_ACC_4G  /**< Define acc sensitivity in use */
+#define Gravity     1/AccG              /**< Define gravity value in bits */
 
 /*******************************************************************************
 * Function Name  : ReadGyroXYZ
@@ -46,15 +48,25 @@ void ReadAccXYZ ( data_xyz* data ) {
 
     ReadAccRaw   ( &reading );
 
-    data->x = (float) ((float)reading.x * acc_cal_matrix[0][0] +
-                       (float)reading.y * acc_cal_matrix[0][1] +
-                       (float)reading.z * acc_cal_matrix[0][2] - acc_offsets [0]) ;
-    data->y = (float) ((float)reading.x * acc_cal_matrix[1][0] +
-                       (float)reading.y * acc_cal_matrix[1][1] +
-                       (float)reading.z * acc_cal_matrix[1][2] - acc_offsets [1]) ;
-    data->z = (float) ((float)reading.x * acc_cal_matrix[2][0] +
-                       (float)reading.y * acc_cal_matrix[2][1] +
-                       (float)reading.z * acc_cal_matrix[2][2] - acc_offsets [2]) ;
+//    data->x = (float) ((float)reading.x * acc_cal_matrix[0][0] +
+//                       (float)reading.y * acc_cal_matrix[0][1] +
+//                       (float)reading.z * acc_cal_matrix[0][2] - acc_offsets [0]) ;
+//    data->y = (float) ((float)reading.x * acc_cal_matrix[1][0] +
+//                       (float)reading.y * acc_cal_matrix[1][1] +
+//                       (float)reading.z * acc_cal_matrix[1][2] - acc_offsets [1]) ;
+//    data->z = (float) ((float)reading.x * acc_cal_matrix[2][0] +
+//                       (float)reading.y * acc_cal_matrix[2][1] +
+//                       (float)reading.z * acc_cal_matrix[2][2] - acc_offsets [2]) ;
+//
+    data->x = ((float)reading.x * acc_cal_matrix[0][0] +
+               (float)reading.y * acc_cal_matrix[1][0] +
+               (float)reading.z * acc_cal_matrix[2][0] - acc_offsets [0]) ;
+    data->y = ((float)reading.x * acc_cal_matrix[0][1] +
+               (float)reading.y * acc_cal_matrix[1][1] +
+               (float)reading.z * acc_cal_matrix[2][1] - acc_offsets [1]) ;
+    data->z = ((float)reading.x * acc_cal_matrix[0][2] +
+               (float)reading.y * acc_cal_matrix[1][2] +
+               (float)reading.z * acc_cal_matrix[2][2] - acc_offsets [2]) ;
 }
 void ReadMagXYZ ( data_xyz* data ) {
 
@@ -62,15 +74,24 @@ void ReadMagXYZ ( data_xyz* data ) {
 
     ReadMagRaw   ( &reading );
 
-    data->x = (float) ((float)reading.x * mag_cal_matrix[0][0] +
-                       (float)reading.y * mag_cal_matrix[0][1] +
-                       (float)reading.z * mag_cal_matrix[0][2] - mag_offsets [0]) ;
-    data->y = (float) ((float)reading.x * mag_cal_matrix[1][0] +
-                       (float)reading.y * mag_cal_matrix[1][1] +
-                       (float)reading.z * mag_cal_matrix[1][2] - mag_offsets [1]) ;
-    data->z = (float) ((float)reading.x * mag_cal_matrix[2][0] +
-                       (float)reading.y * mag_cal_matrix[2][1] +
-                       (float)reading.z * mag_cal_matrix[2][2] - mag_offsets [2]) ;
+//    data->x = (float) ((float)reading.x * mag_cal_matrix[0][0] +
+//                       (float)reading.y * mag_cal_matrix[0][1] +
+//                       (float)reading.z * mag_cal_matrix[0][2] - mag_offsets [0]) ;
+//    data->y = (float) ((float)reading.x * mag_cal_matrix[1][0] +
+//                       (float)reading.y * mag_cal_matrix[1][1] +
+//                       (float)reading.z * mag_cal_matrix[1][2] - mag_offsets [1]) ;
+//    data->z = (float) ((float)reading.x * mag_cal_matrix[2][0] +
+//                       (float)reading.y * mag_cal_matrix[2][1] +
+//                       (float)reading.z * mag_cal_matrix[2][2] - mag_offsets [2]) ;
+    data->x =((float)reading.x * mag_cal_matrix[0][0] +
+              (float)reading.y * mag_cal_matrix[1][0] +
+              (float)reading.z * mag_cal_matrix[2][0] - mag_offsets [0]) ;
+    data->y =((float)reading.x * mag_cal_matrix[0][1] +
+              (float)reading.y * mag_cal_matrix[1][1] +
+              (float)reading.z * mag_cal_matrix[2][1] - mag_offsets [1]) ;
+    data->z =((float)reading.x * mag_cal_matrix[0][2] +
+              (float)reading.y * mag_cal_matrix[1][2] +
+              (float)reading.z * mag_cal_matrix[2][2] - mag_offsets [2]) ;
 }
 void AutoCalibrateAcc ( void ) {
 
@@ -92,7 +113,7 @@ void AutoCalibrateAcc ( void ) {
     }
     acc_offsets[0] = cal_sum[0] / AVERAGE_READINGS;
     acc_offsets[1] = cal_sum[1] / AVERAGE_READINGS;
-    acc_offsets[2] = cal_sum[2] / AVERAGE_READINGS;
+    acc_offsets[2] = cal_sum[2] / AVERAGE_READINGS - Gravity;
 }
 void AutoCalibrateGyro ( void ) {
 
@@ -139,9 +160,19 @@ void UpdateAccBias ( void ) {          // Use carefully, you have to guarantee t
 
 void InitMARG ( void ){
 
-    MagEnableConfig ( TEMP_EN | HIGH_MAG_RES | M_ODR100, FS_2_GAUSS );
-    AccEnableConfig ( CONTINUOUS_UPDATE | ENABLE_ALL_AXES | A_ODR100, ABW362 | FS_4_G );
-    GyroEnable      ( G_ODR190 | BW10 | GYRO_ON | ENABLE_ALL_AXES );  // ODR 190Hz Cutoff 50 Hz
+    MagEnableConfig ( TEMP_EN | HIGH_MAG_RES | M_ODR50, FS_2_GAUSS );
+    AccEnableConfig ( CONTINUOUS_UPDATE | ENABLE_ALL_AXES | A_ODR200, ABW50 | FS_4_G );
+    GyroEnable      ( G_ODR190 | BW00 | GYRO_ON | ENABLE_ALL_AXES );  // ODR 190Hz Cutoff 12.5 Hz
     GyroConfig      ( CONTINUOUS_UPDATE | FS_500_DPS | LITTLE_ENDIAN);
+
+    // Warmup readings
+    sensor_xyz some_readings;
+    int i;
+
+    for ( i=0; i<WARMUP_READINGS; i++ ) {            // Take a number of readings to warm up
+        ReadGyroRaw ( &some_readings );
+        ReadAccRaw  ( &some_readings );
+        ReadMagRaw  ( &some_readings );
+    }
 }
 /**\endcode \}*/

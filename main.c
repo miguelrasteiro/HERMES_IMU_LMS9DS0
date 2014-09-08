@@ -40,10 +40,12 @@
 #define BRG         100000//(PBCLK/2/Fsck)                         /**< I2C frequency */
 #define TIMER_1_INT_VECTOR 4                                       /**< Interruption Vector */
 
-#define ACC_EXT_CAL 0                   /**< 1 - Using Calibrated Matrix; 0 - Default */
+#define ACC_EXT_CAL 1                   /**< 1 - Using Calibrated Matrix; 0 - Default */
 #define MAG_EXT_CAL 0                   /**< 1 - Using Calibrated Matrix; 0 - Default */
 
+#define PI          3.14159265358979    /**< Define gyro sensitivity in use */
 #define Gyrodps     SENSITIVITY_500DPS  /**< Define gyro sensitivity in use */
+#define GyroRad     Gyrodps*PI/180      /**< Define gyro sensitivity in use in rad/s */
 #define AccG        SENSITIVITY_ACC_4G  /**< Define acc sensitivity in use */
 #define MagGauss    SENSITIVITY_MAG_2G  /**< Define mag sensitivity in use */
 #define Gravity     1/AccG              /**< Define gravity value in bits */
@@ -114,42 +116,66 @@ int main(void)
              acc,
              mag;
 
-    float time_elapsed = 0;
+
     unsigned int temptime;
     short temp;
     UINT8 test;
     float x,y,z;
+    float cycle_time, time_elapsed = 0;
 
 
     InitUART();
     OpenI2C1( I2C_EN, BRG );    //Enable I2C channel
     InitMARG ();
-    AutoCalibrateGyro();
-    // AutoCalibrateAcc();
+    // AutoCalibrateGyro();
+    AutoCalibrateAcc();
     InitTimer1();
     WriteTimer1(0x00);  // Timer set to 0
+
     while(1)
     {
-        ReadGyroXYZ  ( & gyro );
-        ReadAccXYZ   ( & acc  );
-        ReadMagXYZ   ( & mag  );
-//        ReadGyroRaw   ( & gyro_raw  );
-
+        // Colocar em função
         temptime = ReadTimer1(); // Reads time elapsed
-        WriteTimer1(0x00);  // Timer set to 0
-        time_elapsed = time_elapsed + (float)((double) (temptime * T1overflow * 256 * 2) / PBCLK); // tempo = valortimer*overflow*prescaler*2/fosc ;
-        T1overflow = 1;
+        cycle_time = (float)((double) (temptime * T1overflow * 256 * 4) / PBCLK );// tempo = valortimer*overflow*prescaler*4/fosc ;
 
-        sprintf(buf," %f %f %f",(float) gyro.x*Gyrodps,(float) gyro.y*Gyrodps,(float) gyro.z*Gyrodps );
-        SendDataBuffer(buf, strlen(buf));
-//        sprintf(buf," %f %f %f",(float) gyro_raw.x*Gyrodps,(float) gyro_raw.y*Gyrodps,(float) gyro_raw.z*Gyrodps );
+        if (cycle_time >= 0.01)
+        {
+            time_elapsed = time_elapsed + cycle_time;
+            WriteTimer1(0x00);  // Timer set to 0
+            T1overflow = 1;
+            //sampleFreq = 1/cycle_time;
+
+            ReadGyroXYZ  ( & gyro );
+            ReadAccXYZ   ( & acc  );
+            ReadMagXYZ   ( & mag  );
+
+            gyro.x *=GyroRad; gyro.y *=GyroRad; gyro.z *=GyroRad;
+             acc.x *=AccG;     acc.y *=AccG;     acc.z *=AccG;
+             mag.x *=MagGauss; mag.y *=MagGauss; mag.z *=MagGauss;
+
+
+            sprintf(buf,"I %f %f %f %f %f %f %f %f %f %.4f\n",
+                                            gyro.x, gyro.y, gyro.z,
+                                             acc.x,  acc.y,  acc.z,
+                                             mag.x,  mag.y,  -mag.z,
+                                            cycle_time);
+                SendDataBuffer(buf, strlen(buf));
+        }
+//        temptime = ReadTimer1(); // Reads time elapsed
+//        WriteTimer1(0x00);  // Timer set to 0
+//        time_elapsed = time_elapsed + (float)((double) (temptime * T1overflow * 256 * 2) / PBCLK); // tempo = valortimer*overflow*prescaler*2/fosc ;
+//        T1overflow = 1;
+//
+//        sprintf(buf," %f %f %f",(float) gyro.x*Gyrodps,(float) gyro.y*Gyrodps,(float) gyro.z*Gyrodps );
 //        SendDataBuffer(buf, strlen(buf));
-        sprintf(buf," %f %f %f",(float) acc.x*AccG,(float) acc.y*AccG,(float) acc.z*AccG );//,(float) acc_raw.x,(float) acc_raw.y,(float) acc_raw.z );//
-        SendDataBuffer(buf, strlen(buf));
-        sprintf(buf," %f %f %f",(float) mag.x*MagGauss,(float) mag.y*MagGauss,(float) mag.z*MagGauss );
-        SendDataBuffer(buf, strlen(buf));
-        sprintf(buf, " %f\n", time_elapsed );
-        SendDataBuffer(buf, strlen(buf));
+////        sprintf(buf," %f %f %f",(float) gyro_raw.x*Gyrodps,(float) gyro_raw.y*Gyrodps,(float) gyro_raw.z*Gyrodps );
+////        SendDataBuffer(buf, strlen(buf));
+//        sprintf(buf," %f %f %f",(float) acc.x*AccG,(float) acc.y*AccG,(float) acc.z*AccG );//,(float) acc_raw.x,(float) acc_raw.y,(float) acc_raw.z );//
+//        SendDataBuffer(buf, strlen(buf));
+//        sprintf(buf," %f %f %f",(float) mag.x*MagGauss,(float) mag.y*MagGauss,(float) mag.z*MagGauss );
+//        SendDataBuffer(buf, strlen(buf));
+//        sprintf(buf, " %f\n", time_elapsed );
+//        SendDataBuffer(buf, strlen(buf));
 
     }
     return -1;
