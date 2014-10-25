@@ -52,7 +52,7 @@ void  ReadAccXYZ        ( data_xyz*  data  );
  * \param      [in/out] struct data_xyz pointer (type float (32bits)).
  */
 void  ReadMagXYZ        ( data_xyz*  data  );
-/** \fn     void InitMARG ( void )
+/** \fn     void InitMARG_DataReadyMeasurementMode ( void )
  *  \brief  Inicialization of the MARG with default values.
  *  \details By default:
  *                         \n For magnetometer inicialization:
@@ -75,7 +75,7 @@ void  ReadMagXYZ        ( data_xyz*  data  );
  *            \n\t\t            LITTLE_ENDIAN    \t - Little Endian Data Output
  *            \n\t\t            CONTINUOUS_UPDATE\t - Continuous Block Update
  */
-void  InitMARG          ( void );
+void  InitMARG_ContinuousMeasurementMode  ( void );
 /** \fn     void AutoCalibrateAcc ( void )
  * \brief   Takes a number off readings to calculate accelerometer offsets
  */

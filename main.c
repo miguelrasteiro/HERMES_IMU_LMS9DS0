@@ -32,12 +32,13 @@
 #pragma config FPLLMUL = MUL_20, FPLLIDIV = DIV_2, FPLLODIV = DIV_1, FWDTEN = OFF
 #pragma config POSCMOD = HS, FNOSC = PRIPLL, FPBDIV = DIV_1
 
-#define SYS_FREQ (80000000L)                                       /**< CPU clock frequency */
+#define SYS_FREQ                (80000000L)                                       /**< CPU clock frequency */
 #define	GetPeripheralClock()	(SYS_FREQ/(1 << OSCCONbits.PBDIV))
 #define	GetInstructionClock()	(SYS_FREQ)                         /**< Instructions frequency */
-#define PBCLK       SYS_FREQ/2
-#define Fsck        375000
-#define BRG         100000//(PBCLK/2/Fsck)                         /**< I2C frequency */
+#define UART_BAUDRATE             230400
+#define PBCLK                    SYS_FREQ
+#define I2Cclk                    100000
+#define BRG                  (PBCLK/I2Cclk)/2-2 //(PBCLK/2/Fsck)                         /**< I2C frequency */
 #define TIMER_1_INT_VECTOR 4                                       /**< Interruption Vector */
 
 #define ACC_EXT_CAL 1                   /**< 1 - Using Calibrated Matrix; 0 - Default */
@@ -106,6 +107,7 @@ int main(void)
 {
     // Variables
     UINT8   buf[1024];
+    UINT8   rd [3];
     // Read RawValues
     
     sensor_xyz gyro_raw,
@@ -123,23 +125,61 @@ int main(void)
     float x,y,z;
     float cycle_time, time_elapsed = 0;
 
+    InitUART ();
+//      OpenI2C1(I2C_EN,98);
 
-    InitUART();
-    OpenI2C1( I2C_EN, BRG );    //Enable I2C channel
-    InitMARG ();
-    // AutoCalibrateGyro();
+	I2CConfigure ( I2C1, I2C_ENABLE_SLAVE_CLOCK_STRETCHING);
+	I2CSetFrequency ( I2C1, GetPeripheralClock(), I2Cclk);
+	I2CEnable(I2C1, TRUE);
+//    InitMARG_DataReadyMeasurementMode ();
+    InitMARG_ContinuousMeasurementMode ();
+    AutoCalibrateGyro();
     AutoCalibrateAcc();
     InitTimer1();
     WriteTimer1(0x00);  // Timer set to 0
 
+    TRISAbits.TRISA2 = 0;
+    LATAbits.LATA2 = 0;	// set RA2 out
     while(1)
     {
+//        ReadRegister (Address_G, STATUS_REG_G , &rd[0] );
+//        ReadRegister (Address_XM, STATUS_REG_A, &rd[1] );
+//        ReadRegister (Address_XM, STATUS_REG_M, &rd[2] );
+//
+//        if (rd[0]&0x08 && rd[1]&0x08 && rd[2]&0x08) {
+//
+//            LATAbits.LATA2 = 1;	// set RA2 out
+//
+//            temptime = ReadTimer1(); // Reads time elapsed
+//            WriteTimer1(0x00);  // Timer set to 0
+//            T1overflow = 1;
+//            cycle_time = (float)((double) (temptime * T1overflow * 256) / PBCLK );// tempo = valortimer*overflow*prescaler*4/fosc ;
+//            time_elapsed = time_elapsed + cycle_time;
+//
+//            ReadGyroXYZ ( & gyro);
+//            ReadAccXYZ  ( & acc );
+//            ReadMagXYZ  ( & mag );
+//            gyro.x *=GyroRad; gyro.y *=GyroRad; gyro.z *=GyroRad;
+//             acc.x *=AccG;     acc.y *=AccG;     acc.z *=AccG;
+//             mag.x *=MagGauss; mag.y *=MagGauss; mag.z *=MagGauss;
+//
+//            sprintf(buf,"I %f %f %f %f %f %f %f %f %f %.4f\n",
+//                                            gyro.x, gyro.y, gyro.z,
+//                                             acc.x,  acc.y,  acc.z,
+//                                             mag.x,  mag.y,  -mag.z,
+//                                            cycle_time);
+//                SendDataBuffer(buf, strlen(buf));
+//
+//            LATAbits.LATA2 = 0;	// set RA2 out
+//        }
+
         // Colocar em função
         temptime = ReadTimer1(); // Reads time elapsed
-        cycle_time = (float)((double) (temptime * T1overflow * 256 * 4) / PBCLK );// tempo = valortimer*overflow*prescaler*4/fosc ;
+        cycle_time = (float)((double) (temptime * T1overflow * 256) / PBCLK );// tempo = valortimer*overflow*prescaler*4/fosc ;
 
         if (cycle_time >= 0.01)
         {
+             LATAbits.LATA2 = 1;	// set RA2 out
             time_elapsed = time_elapsed + cycle_time;
             WriteTimer1(0x00);  // Timer set to 0
             T1overflow = 1;
@@ -160,26 +200,12 @@ int main(void)
                                              mag.x,  mag.y,  -mag.z,
                                             cycle_time);
                 SendDataBuffer(buf, strlen(buf));
+                 LATAbits.LATA2 = 0;	// set RA2 out
         }
-//        temptime = ReadTimer1(); // Reads time elapsed
-//        WriteTimer1(0x00);  // Timer set to 0
-//        time_elapsed = time_elapsed + (float)((double) (temptime * T1overflow * 256 * 2) / PBCLK); // tempo = valortimer*overflow*prescaler*2/fosc ;
-//        T1overflow = 1;
-//
-//        sprintf(buf," %f %f %f",(float) gyro.x*Gyrodps,(float) gyro.y*Gyrodps,(float) gyro.z*Gyrodps );
-//        SendDataBuffer(buf, strlen(buf));
-////        sprintf(buf," %f %f %f",(float) gyro_raw.x*Gyrodps,(float) gyro_raw.y*Gyrodps,(float) gyro_raw.z*Gyrodps );
-////        SendDataBuffer(buf, strlen(buf));
-//        sprintf(buf," %f %f %f",(float) acc.x*AccG,(float) acc.y*AccG,(float) acc.z*AccG );//,(float) acc_raw.x,(float) acc_raw.y,(float) acc_raw.z );//
-//        SendDataBuffer(buf, strlen(buf));
-//        sprintf(buf," %f %f %f",(float) mag.x*MagGauss,(float) mag.y*MagGauss,(float) mag.z*MagGauss );
-//        SendDataBuffer(buf, strlen(buf));
-//        sprintf(buf, " %f\n", time_elapsed );
-//        SendDataBuffer(buf, strlen(buf));
-
     }
     return -1;
 }
+
 /** \fn     void InitUART (void)
  * \brief   Inicialize UART
  * \details By Default: \n
@@ -193,7 +219,7 @@ void InitUART(void){
     UARTConfigure(UART_MODULE_ID, UART_ENABLE_PINS_TX_RX_ONLY);
     UARTSetFifoMode(UART_MODULE_ID, UART_INTERRUPT_ON_TX_NOT_FULL | UART_INTERRUPT_ON_RX_NOT_EMPTY);
     UARTSetLineControl(UART_MODULE_ID, UART_DATA_SIZE_8_BITS | UART_PARITY_NONE | UART_STOP_BITS_1);
-    UARTSetDataRate(UART_MODULE_ID, GetPeripheralClock(), 115200);
+    UARTSetDataRate(UART_MODULE_ID, GetPeripheralClock(), UART_BAUDRATE);
     UARTEnable(UART_MODULE_ID, UART_ENABLE_FLAGS(UART_PERIPHERAL | UART_RX | UART_TX));
 }
 

@@ -17,6 +17,7 @@
   * \code
   */
 #include "lsm9ds0.h"
+#include <peripheral/i2c.h>
 #include <plib.h>
 
 
@@ -66,6 +67,81 @@ void ReadRegister  ( UINT8 add, UINT8 reg, UINT8* data ) {
     IdleI2C1();                         //Wait to complete
 }
 
+/**
+ *  @brief  Write to device using generic i2c protocol
+ *  @param[in]  slave_addr - slave address
+ *  @param[in]  reg_addr   - register address
+ *  @param[in]  length     - number of bytes to write
+ *  @param[in]  *data      - pointer for data to write
+ *  @return     0 if sucessfull, 1 otherwise
+ */
+int i2c_write(unsigned char slave_addr, unsigned char reg_addr, unsigned char length, unsigned char const *data) {
+
+	BYTE i;
+
+	StartI2C1();								//Send the Start Bit
+	IdleI2C1();									//Wait to complete
+        if (MasterWriteI2C1(slave_addr|Write ))
+            return 1;
+	IdleI2C1();
+        if (MasterWriteI2C1(reg_addr))
+            return 1;
+	IdleI2C1();
+
+	for(i=0;i<length;i++){
+            if (MasterWriteI2C1(data[i]))
+                return 1;
+	}
+        StopI2C1();								//Send the Stop condition
+        IdleI2C1();								//Wait to complete
+
+	return 0;
+}
+
+/**
+ *  @brief  Write to device using generic i2c protocol
+ *  @param[in]  slave_addr - slave address
+ *  @param[in]  reg_addr   - register address
+ *  @param[in]  length     - number of bytes to read
+ *  @param[in]  *data      - pointer to where register data is to be transfered
+ *  @return     0 if sucessfull, 1 otherwise
+ */
+int i2c_read(unsigned char slave_addr, unsigned char reg_addr, unsigned char length, unsigned char *data) {
+
+	BYTE i=2;
+
+	StartI2C1();								//Send the Start Bit
+	IdleI2C1();
+        if (MasterWriteI2C1((slave_addr|Write )))
+            return 1;
+	IdleI2C1();
+        if (MasterWriteI2C1(reg_addr))
+            return 1;
+	IdleI2C1();
+        StartI2C1();                        //Send the Start Bit
+        IdleI2C1();                         //Wait to complete
+        if (MasterWriteI2C1((slave_addr|Read )))
+            return 1;
+	IdleI2C1();
+	//I2CReceiverEnable ( I2C1, TRUE);
+
+	for(i=0;i<length;i++) {
+            data[i] = MasterReadI2C1();
+		if(i<(length-1)) {
+                    I2CAcknowledgeByte(I2C1, TRUE);
+                   // IdleI2C1();
+		}
+		else {
+                    I2CAcknowledgeByte(I2C1, FALSE);
+                   // IdleI2C1();
+		}
+	}
+        StopI2C1();								//Send the Stop condition
+        IdleI2C1();								//Wait to complete
+
+	return 0;
+}
+
 /*******************************************************************************
 * Function Name  : ReadGyroRaw
 * Description    : Read the angular velocity values Output Registers
@@ -75,19 +151,32 @@ void ReadRegister  ( UINT8 add, UINT8 reg, UINT8* data ) {
 *******************************************************************************/
 void ReadGyroRaw ( sensor_xyz* raw ) {
 
-    UINT8   L_value, H_value;
+    UINT8 data[6];
+    sensor_xyz raw2;
 
-    ReadRegister ( Address_G, OUT_X_L_G, &L_value );
-    ReadRegister ( Address_G, OUT_X_H_G, &H_value );
-    raw->x = ( H_value <<8 | L_value );
+    i2c_read(Address_G, OUT_X_L_G, 6, data);
+    raw->x = ( data[1] <<8 | data[0] );
+    raw->y = ( data[3] <<8 | data[2] );
+    raw->z = ( data[5] <<8 | data[4] );
 
-    ReadRegister ( Address_G, OUT_Y_L_G, &L_value );
-    ReadRegister ( Address_G, OUT_Y_H_G, &H_value );
-    raw->y = ( H_value <<8 | L_value );
+    raw2.x =  data[1] <<8 ;
+    raw2.x|=  data[0] ;
+    raw2.y = ( data[3] <<8 | data[2] );
+    raw2.z = ( data[5] <<8 | data[4] );
 
-    ReadRegister ( Address_G, OUT_Z_L_G, &L_value );
-    ReadRegister ( Address_G, OUT_Z_H_G, &H_value );
-    raw->z = ( H_value <<8 | L_value );
+//    UINT8   L_value, H_value;
+//
+//    ReadRegister ( Address_G, OUT_X_L_G, &L_value );
+//    ReadRegister ( Address_G, OUT_X_H_G, &H_value );
+//    raw->x = ( H_value <<8 | L_value );
+//
+//    ReadRegister ( Address_G, OUT_Y_L_G, &L_value );
+//    ReadRegister ( Address_G, OUT_Y_H_G, &H_value );
+//    raw->y = ( H_value <<8 | L_value );
+//
+//    ReadRegister ( Address_G, OUT_Z_L_G, &L_value );
+//    ReadRegister ( Address_G, OUT_Z_H_G, &H_value );
+//    raw->z = ( H_value <<8 | L_value );
 }
 
 /*******************************************************************************
@@ -99,19 +188,26 @@ void ReadGyroRaw ( sensor_xyz* raw ) {
 *******************************************************************************/
 void ReadAccRaw  ( sensor_xyz* raw ) {
 
-    UINT8   L_value, H_value;
+    UINT8 data[6];
 
-    ReadRegister ( Address_XM, OUT_X_L_A, &L_value );
-    ReadRegister ( Address_XM, OUT_X_H_A, &H_value );
-    raw->x = ( H_value <<8 | L_value );
+    i2c_read(Address_XM, OUT_X_L_A, 6, data);
+    raw->x = ( data[1] <<8 | data[0] );
+    raw->y = ( data[3] <<8 | data[2] );
+    raw->z = ( data[5] <<8 | data[4] );
 
-    ReadRegister ( Address_XM, OUT_Y_L_A, &L_value );
-    ReadRegister ( Address_XM, OUT_Y_H_A, &H_value );
-    raw->y = ( H_value <<8 | L_value );
-
-    ReadRegister ( Address_XM, OUT_Z_L_A, &L_value );
-    ReadRegister ( Address_XM, OUT_Z_H_A, &H_value );
-    raw->z = ( H_value <<8 | L_value );
+//    UINT8   L_value, H_value;
+//
+//    ReadRegister ( Address_XM, OUT_X_L_A, &L_value );
+//    ReadRegister ( Address_XM, OUT_X_H_A, &H_value );
+//    raw->x = ( H_value <<8 | L_value );
+//
+//    ReadRegister ( Address_XM, OUT_Y_L_A, &L_value );
+//    ReadRegister ( Address_XM, OUT_Y_H_A, &H_value );
+//    raw->y = ( H_value <<8 | L_value );
+//
+//    ReadRegister ( Address_XM, OUT_Z_L_A, &L_value );
+//    ReadRegister ( Address_XM, OUT_Z_H_A, &H_value );
+//    raw->z = ( H_value <<8 | L_value );
 }
 
 /*******************************************************************************
@@ -123,19 +219,27 @@ void ReadAccRaw  ( sensor_xyz* raw ) {
 *******************************************************************************/
 void ReadMagRaw  ( sensor_xyz* raw ) {
 
-    UINT8   L_value, H_value;
 
-    ReadRegister ( Address_XM, OUT_X_L_M, &L_value );
-    ReadRegister ( Address_XM, OUT_X_H_M, &H_value );
-    raw->x = ( H_value <<8 | L_value );
+    UINT8 data[6];
 
-    ReadRegister ( Address_XM, OUT_Y_L_M, &L_value );
-    ReadRegister ( Address_XM, OUT_Y_H_M, &H_value );
-    raw->y = ( H_value <<8 | L_value );
+    i2c_read(Address_XM, OUT_X_L_M, 6, data);
+    raw->x = ( data[1] <<8 | data[0] );
+    raw->y = ( data[3] <<8 | data[2] );
+    raw->z = ( data[5] <<8 | data[4] );
 
-    ReadRegister ( Address_XM, OUT_Z_L_M, &L_value );
-    ReadRegister ( Address_XM, OUT_Z_H_M, &H_value );
-    raw->z = ( H_value <<8 | L_value );
+//    UINT8   L_value, H_value;
+//
+//    ReadRegister ( Address_XM, OUT_X_L_M, &L_value );
+//    ReadRegister ( Address_XM, OUT_X_H_M, &H_value );
+//    raw->x = ( H_value <<8 | L_value );
+//
+//    ReadRegister ( Address_XM, OUT_Y_L_M, &L_value );
+//    ReadRegister ( Address_XM, OUT_Y_H_M, &H_value );
+//    raw->y = ( H_value <<8 | L_value );
+//
+//    ReadRegister ( Address_XM, OUT_Z_L_M, &L_value );
+//    ReadRegister ( Address_XM, OUT_Z_H_M, &H_value );
+//    raw->z = ( H_value <<8 | L_value );
 }
 
 /*******************************************************************************
@@ -288,7 +392,12 @@ void AccEnableConfig ( char command1, char command2 ){
 *******************************************************************************/
 void MagEnableConfig ( char command1, char command2 ){
 
+ReadRegister (Address_XM, WHO_AM_I_XM, &buff[0] );
+    WriteRegister ( Address_XM, CTRL_REG5_XM, 0x00 );
+ReadRegister (Address_XM, CTRL_REG5_XM, &buff[0] );
     WriteRegister ( Address_XM, CTRL_REG5_XM, command1 );
+ReadRegister (Address_XM, CTRL_REG5_XM, &buff[0] );
+
     WriteRegister ( Address_XM, CTRL_REG6_XM, command2 );
     WriteRegister ( Address_XM, CTRL_REG7_XM, 0B00000000 );
 }
